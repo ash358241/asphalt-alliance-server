@@ -42,6 +42,26 @@ client.connect((err) => {
       })
   })
 
+  // read specific entry from database
+app.get('/specificEntry', (req, res) => {
+    let queryEmail = req.query.email;
+    console.log(queryEmail)
+    entryCollection.find({ email: queryEmail })
+      .toArray((err, specificEntry) => {
+        res.send(specificEntry);
+      })
+  })
+
+  // delete specific entry from database
+  app.delete("/deleteEntry/:id", (req, res) => {
+    entryCollection.deleteOne({ _id: ObjectId(req.params.id) })
+      .then(result => {
+        // console.log(result.deletedCount)
+        res.send(result.deletedCount > 0);
+ 
+      })
+  })
+
 
 });
 
