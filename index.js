@@ -15,6 +15,7 @@ const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 client.connect((err) => {
   const entryCollection = client.db("asphaltAlliance").collection("entries");
+  const feedbackCollection = client.db("asphaltAlliance").collection("feedbacks");
 
   //insert entry into database
   app.post('/addEntry', (req, res) => {
@@ -52,6 +53,25 @@ app.get('/specificEntry', (req, res) => {
       })
   })
 
+  // insert feedback into to database
+ app.post('/addFeedback', (req, res) => {
+  const feedback = req.body;
+  console.log(feedback);
+  feedbackCollection.insertOne(feedback)
+      .then((result) => {
+          res.send(result.insertedCount > 0)
+      })
+})
+
+   // read feedbacks from database
+ app.get('/feedbacks', (req, res) => {
+  feedbackCollection.find({}).sort({ _id: -1 }).limit(3) 
+      .toArray((err, documents) => {
+          res.send(documents);
+          // console.log(err);
+      })
+})
+
   // delete specific entry from database
   app.delete("/deleteEntry/:id", (req, res) => {
     entryCollection.deleteOne({ _id: ObjectId(req.params.id) })
@@ -61,8 +81,6 @@ app.get('/specificEntry', (req, res) => {
  
       })
   })
-
-
 });
 
 app.get("/", (req, res) => {
