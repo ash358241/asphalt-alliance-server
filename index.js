@@ -65,7 +65,7 @@ app.get('/specificEntry', (req, res) => {
 
    // read feedbacks from database
  app.get('/feedbacks', (req, res) => {
-  feedbackCollection.find({}).sort({ _id: -1 }).limit(3) 
+  feedbackCollection.find({}) 
       .toArray((err, documents) => {
           res.send(documents);
           // console.log(err);
